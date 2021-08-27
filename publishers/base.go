@@ -6,9 +6,11 @@ type Publisher interface {
 }
 
 func PublishTasks() {
-	publishers := Publishers{}
+	publishers := Publishers{
+		JobsPublisher{},
+	}
 
 	for _, publisher := range publishers {
-		publisher.Publish()
+		go publisher.Publish()
 	}
 }

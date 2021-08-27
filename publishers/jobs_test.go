@@ -28,13 +28,13 @@ func TestJobsTask_Publish(t *testing.T) {
 	asserter.Equal(count, int64(10))
 
 	var jobs []models.Job
-	_, err = db.Select(&jobs, "SELECT * FROM jobs WHERE finished_at IS NOT NULL")
+	_, err = db.Select(&jobs, "SELECT * FROM jobs WHERE queued_at IS NOT NULL")
 	asserter.NoError(err)
 
 	for _, job := range jobs {
-		asserter.NotZero(job.Sleep)
-		asserter.NotEmpty(job.StartedAt)
-		asserter.NotEmpty(job.FinishedAt)
+		asserter.NotNil(job.QueuedAt)
+		asserter.Nil(job.StartedAt)
+		asserter.Nil(job.FinishedAt)
 	}
 }
 

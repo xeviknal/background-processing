@@ -14,7 +14,6 @@ func main() {
 	server.Start()
 	waitForTermination()
 	server.Stop()
-
 }
 
 // Waiting until the process receive a Termination signal

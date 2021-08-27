@@ -9,6 +9,8 @@ import (
 	"github.com/xeviknal/background-commons/database"
 )
 
+const defaultPublishCadence = 3 * time.Second
+
 type Server struct {
 	StartedAt time.Time
 }
@@ -29,7 +31,7 @@ func (s *Server) Start() {
 	go func() {
 		for {
 			publishers.PublishTasks()
-			time.Sleep(5 * time.Second)
+			time.Sleep(defaultPublishCadence)
 		}
 	}()
 }
