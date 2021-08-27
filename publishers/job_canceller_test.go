@@ -1,54 +1,64 @@
 package publishers
 
 import (
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+
 	"github.com/xeviknal/background-commons/database"
 	"github.com/xeviknal/background-commons/models"
 )
 
-func TestJobsTask_Publish(t *testing.T) {
+func TestJobsCanceller_Publish(t *testing.T) {
 	asserter := assert.New(t)
 	db := database.GetDb()
 
 	// Prepare the environment
 	// Create a new Job first
-	prepareEnvironment(t)
+	prepareCancellerEnvironment(t)
 
-	count, err := db.SelectInt("SELECT count(*) FROM jobs WHERE queued_at IS NULL")
+	count, err := db.SelectInt(fmt.Sprintf("SELECT count(*) FROM jobs WHERE started_at IS NOT NULL "+
+		"AND TIMEDIFF(NOW(), started_at) > %d", defaultTimeout))
 	asserter.NoError(err)
 	asserter.Equal(count, int64(10))
 
 	// Call the task
-	JobsPublisher{}.Publish()
+	JobCancellerPublisher{}.Publish()
 
-	count, err = db.SelectInt("SELECT count(*) FROM jobs WHERE queued_at IS NOT NULL")
+	count, err = db.SelectInt("SELECT count(*) FROM jobs WHERE cancelled_at IS NOT NULL")
 	asserter.NoError(err)
 	asserter.Equal(count, int64(10))
 
 	var jobs []models.Job
-	_, err = db.Select(&jobs, "SELECT * FROM jobs WHERE queued_at IS NOT NULL")
+	_, err = db.Select(&jobs, "SELECT * FROM jobs WHERE cancelled_at IS NOT NULL")
 	asserter.NoError(err)
 
 	for _, job := range jobs {
+		asserter.NotNil(job.CancelledAt)
+		asserter.NotNil(job.StartedAt)
 		asserter.NotNil(job.QueuedAt)
-		asserter.Nil(job.StartedAt)
 		asserter.Nil(job.FinishedAt)
 	}
-
-	database.Clean()
 }
 
-func prepareEnvironment(t *testing.T) {
+func prepareCancellerEnvironment(t *testing.T) {
 	database.SetConnectionConfig("test", "test", "test")
 	db := database.GetDb()
 
+	defaultTimeout = 1 // 1 second
+
 	for i := 0; i < 10; i++ {
 		job := models.NewJob(10)
+		now := time.Now()
+		job.QueuedAt = &now
+		job.StartedAt = &now
 		err := db.Insert(&job)
 		if err != nil {
 			t.Fatalf("error while creating test data: %v", err)
 		}
 	}
+
+	time.Sleep(1 * time.Second)
 }
