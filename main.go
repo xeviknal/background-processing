@@ -1,4 +1,4 @@
-package background_processing
+package main
 
 import (
 	"log"
