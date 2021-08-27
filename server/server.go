@@ -4,6 +4,8 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/xeviknal/background-processing/publishers"
+
 	"github.com/xeviknal/background-commons/database"
 )
 
@@ -26,6 +28,7 @@ func (s *Server) Start() {
 
 	go func() {
 		for {
+			publishers.PublishTasks()
 			time.Sleep(5 * time.Second)
 		}
 	}()
