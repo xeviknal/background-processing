@@ -21,8 +21,8 @@ func TestGetSingletonBuffer(t *testing.T) {
 	asserter := assert.New(t)
 	buffer := GetBuffer()
 	buf := buffer.(*TaskBuffer)
-	asserter.Equal(cap(buf.Channel), 10)
-	asserter.Equal(buf.Tx, 1)
+	asserter.Equal(100, cap(buf.Channel))
+	asserter.Equal(10, buf.Tx)
 }
 
 // Adding task method works
@@ -81,4 +81,6 @@ func TestNextTask(t *testing.T) {
 	asserter.Equal(b.Size(), 1)
 	b.Add(&td)
 	asserter.Equal(b.Size(), 2)
+
+	b.Close()
 }

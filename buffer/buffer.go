@@ -1,20 +1,31 @@
 package buffer
 
+import "time"
+
 type Buffer interface {
 	Add(t *Descriptor)
 	Next() *Descriptor
 	Size() int
 	Close()
+	IsClosed() bool
 }
 
 type TaskBuffer struct {
+	// FIFO to append the background tasks
 	Channel chan *Descriptor
-	Tx      int
+
+	// Tx is the transmission rate
+	// It is the number of tasks to process per second
+	// If Tx is 10, then every task will be executed every 100ms
+	Tx int
+
+	// Whether the channel is closed
+	Closed bool
 }
 
 var tb *Buffer
-var defaultBufferCap = 10
-var defaultBufferTx = 1
+var defaultBufferCap = 100 // 100 maxim tasks, otherwise wait the execution
+var defaultBufferTx = 10   // 10 tasks per second
 
 func NewTaskBuffer(cap, tx int) Buffer {
 	tb := &TaskBuffer{
@@ -25,7 +36,7 @@ func NewTaskBuffer(cap, tx int) Buffer {
 }
 
 func GetBuffer() Buffer {
-	if tb != nil {
+	if tb != nil && !(*tb).IsClosed() {
 		return *tb
 	}
 
@@ -36,7 +47,7 @@ func GetBuffer() Buffer {
 
 func SetBufferSettings(cap, tx int) {
 	defaultBufferCap = cap
-	defaultBufferTx = tx
+	defaultBufferTx = 1000 / tx // 1 second split into TX tasks
 }
 
 func (tb *TaskBuffer) Add(t *Descriptor) {
@@ -44,6 +55,7 @@ func (tb *TaskBuffer) Add(t *Descriptor) {
 }
 
 func (tb *TaskBuffer) Next() *Descriptor {
+	time.Sleep(time.Duration(tb.Tx) * time.Millisecond)
 	return <-tb.Channel
 }
 
@@ -53,6 +65,11 @@ func (tb *TaskBuffer) Size() int {
 
 func (tb *TaskBuffer) Close() {
 	close(tb.Channel)
+	tb.Closed = true
+}
+
+func (tb *TaskBuffer) IsClosed() bool {
+	return tb.Closed
 }
 
 type Descriptor interface {
