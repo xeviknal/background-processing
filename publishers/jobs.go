@@ -10,7 +10,6 @@ import (
 )
 
 type JobsPublisher struct{}
-type JobsConsumer struct{}
 
 // Checking that JobsPublisher implements
 //  Publisher interface at compile time

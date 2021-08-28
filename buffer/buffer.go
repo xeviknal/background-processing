@@ -55,8 +55,9 @@ func (tb *TaskBuffer) Add(t *Descriptor) {
 }
 
 func (tb *TaskBuffer) Next() *Descriptor {
+	next := <-tb.Channel
 	time.Sleep(time.Duration(tb.Tx) * time.Millisecond)
-	return <-tb.Channel
+	return next
 }
 
 func (tb *TaskBuffer) Size() int {
@@ -73,13 +74,13 @@ func (tb *TaskBuffer) IsClosed() bool {
 }
 
 type Descriptor interface {
-	GetConsumer() interface{}
-	GetDescriptor() interface{}
+	GetConsumer() string
+	GetDescriptor() map[string]string
 }
 
 type TaskDescriptor struct {
-	Consumer   interface{}
-	Descriptor interface{}
+	Consumer   string
+	Descriptor map[string]string
 }
 
 func (td TaskDescriptor) GetConsumer() interface{} {
