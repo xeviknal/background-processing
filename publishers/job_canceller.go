@@ -31,7 +31,7 @@ func (jc JobCancellerPublisher) Publish() {
 	// Fetching the jobs that exceeded maximum execution time allowed
 	var jobs []models.Job
 	_, err = trans.Select(&jobs, fmt.Sprintf("SELECT * FROM jobs WHERE started_at IS NOT NULL "+
-		"AND TIMEDIFF(NOW(), started_at) > %d FOR UPDATE", defaultTimeout))
+		"AND TIMEDIFF(NOW(), started_at) > %d AND cancelled_at IS NULL FOR UPDATE", defaultTimeout))
 	if err != nil {
 		log.Fatalf("error querying for %T: %v", jc, err)
 	}

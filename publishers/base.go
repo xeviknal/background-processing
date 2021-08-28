@@ -8,6 +8,7 @@ type Publisher interface {
 func PublishTasks() {
 	publishers := Publishers{
 		JobsPublisher{},
+		JobCancellerPublisher{},
 	}
 
 	for _, publisher := range publishers {
