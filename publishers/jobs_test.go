@@ -36,8 +36,6 @@ func TestJobsTask_Publish(t *testing.T) {
 		asserter.Nil(job.StartedAt)
 		asserter.Nil(job.FinishedAt)
 	}
-
-	database.Clean()
 }
 
 func prepareEnvironment(t *testing.T) {

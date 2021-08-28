@@ -75,18 +75,18 @@ func (tb *TaskBuffer) IsClosed() bool {
 
 type Descriptor interface {
 	GetConsumer() string
-	GetDescriptor() map[string]string
+	GetDescriptor() map[string]interface{}
 }
 
 type TaskDescriptor struct {
 	Consumer   string
-	Descriptor map[string]string
+	Descriptor map[string]interface{}
 }
 
-func (td TaskDescriptor) GetConsumer() interface{} {
+func (td TaskDescriptor) GetConsumer() string {
 	return td.Consumer
 }
 
-func (td TaskDescriptor) GetDescriptor() interface{} {
+func (td TaskDescriptor) GetDescriptor() map[string]interface{} {
 	return td.Descriptor
 }

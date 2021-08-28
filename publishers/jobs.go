@@ -34,8 +34,8 @@ func (t JobsPublisher) Publish() {
 	queue := buffer.GetBuffer()
 	for _, job := range jobs {
 		descriptor := buffer.Descriptor(buffer.TaskDescriptor{
-			Consumer:   JobsConsumer{},
-			Descriptor: job.Id,
+			Consumer:   "JobsConsumer",
+			Descriptor: map[string]interface{}{"id": job.Id},
 		})
 		queue.Add(&descriptor)
 

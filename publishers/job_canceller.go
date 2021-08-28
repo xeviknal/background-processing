@@ -39,8 +39,8 @@ func (jc JobCancellerPublisher) Publish() {
 	queue := buffer.GetBuffer()
 	for _, job := range jobs {
 		descriptor := buffer.Descriptor(buffer.TaskDescriptor{
-			Consumer:   JobCancellerConsumer{},
-			Descriptor: job.Id,
+			Consumer:   "JobCancellerConsumer",
+			Descriptor: map[string]interface{}{"id": job.Id},
 		})
 		queue.Add(&descriptor)
 

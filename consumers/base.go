@@ -8,7 +8,7 @@ import (
 
 type Consumers []Consumer
 type Consumer interface {
-	Perform(params map[string]string)
+	Perform(params map[string]interface{})
 }
 
 var consumerMap = map[string]Consumer{
