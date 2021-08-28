@@ -4,8 +4,12 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/xeviknal/background-processing/publishers"
+
 	"github.com/xeviknal/background-commons/database"
 )
+
+const defaultPublishCadence = 3 * time.Second
 
 type Server struct {
 	StartedAt time.Time
@@ -26,7 +30,8 @@ func (s *Server) Start() {
 
 	go func() {
 		for {
-			time.Sleep(5 * time.Second)
+			publishers.PublishTasks()
+			time.Sleep(defaultPublishCadence)
 		}
 	}()
 }

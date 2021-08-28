@@ -11,8 +11,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
-github.com/xeviknal/background-commons v0.0.0-20210827085752-a3e1a4fbdd15 h1:9lwfXhxkDg/GPwW7f0je8PY9G9pxXTCV+e8phj5N3Vk=
-github.com/xeviknal/background-commons v0.0.0-20210827085752-a3e1a4fbdd15/go.mod h1:3oU885KlZckmBYCMFY+g1kNTZVLUrbCWwTbpIcdiPv8=
+github.com/xeviknal/background-commons v0.0.0-20210827235238-af11249a43bf h1:lSOPAKPWKtDGXIlLPPkUoO5/HbBkK3KAJIFTDn/oO3I=
+github.com/xeviknal/background-commons v0.0.0-20210827235238-af11249a43bf/go.mod h1:c+lcX6xK2YIZQPFIJCwjKCsDHM2gmJcXlpMYpyxgg5M=
 github.com/ziutek/mymysql v1.5.4 h1:GB0qdRGsTwQSBVYuVShFBKaXSnSnYYC2d9knnE1LHFs=
 github.com/ziutek/mymysql v1.5.4/go.mod h1:LMSpPZ6DbqWFxNCHW77HeMg9I646SAhApZ/wKdgO/C0=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=

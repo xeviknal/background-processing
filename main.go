@@ -1,4 +1,4 @@
-package background_processing
+package main
 
 import (
 	"log"
@@ -14,7 +14,6 @@ func main() {
 	server.Start()
 	waitForTermination()
 	server.Stop()
-
 }
 
 // Waiting until the process receive a Termination signal
