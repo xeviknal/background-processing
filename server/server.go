@@ -4,9 +4,10 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/xeviknal/background-processing/publishers"
-
 	"github.com/xeviknal/background-commons/database"
+
+	"github.com/xeviknal/background-processing/consumers"
+	"github.com/xeviknal/background-processing/publishers"
 )
 
 const defaultPublishCadence = 3 * time.Second
@@ -29,8 +30,9 @@ func (s *Server) Start() {
 	database.SetConnectionConfig("jobs", "jobs", "jobs")
 
 	go func() {
+		go consumers.ConsumeTasks()
 		for {
-			publishers.PublishTasks()
+			go publishers.PublishTasks()
 			time.Sleep(defaultPublishCadence)
 		}
 	}()

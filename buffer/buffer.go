@@ -25,7 +25,7 @@ type TaskBuffer struct {
 
 var tb *Buffer
 var defaultBufferCap = 100 // 100 maxim tasks, otherwise wait the execution
-var defaultBufferTx = 10   // 10 tasks per second
+var defaultBufferTx = 10   // 10 tasks per second (approx)
 
 func NewTaskBuffer(cap, tx int) Buffer {
 	tb := &TaskBuffer{
@@ -55,8 +55,9 @@ func (tb *TaskBuffer) Add(t *Descriptor) {
 }
 
 func (tb *TaskBuffer) Next() *Descriptor {
-	time.Sleep(time.Duration(tb.Tx) * time.Millisecond)
-	return <-tb.Channel
+	next := <-tb.Channel
+	time.Sleep((1 / time.Duration(tb.Tx)) * time.Millisecond)
+	return next
 }
 
 func (tb *TaskBuffer) Size() int {
@@ -73,19 +74,19 @@ func (tb *TaskBuffer) IsClosed() bool {
 }
 
 type Descriptor interface {
-	GetConsumer() interface{}
-	GetDescriptor() interface{}
+	GetConsumer() string
+	GetDescriptor() map[string]interface{}
 }
 
 type TaskDescriptor struct {
-	Consumer   interface{}
-	Descriptor interface{}
+	Consumer   string
+	Descriptor map[string]interface{}
 }
 
-func (td TaskDescriptor) GetConsumer() interface{} {
+func (td TaskDescriptor) GetConsumer() string {
 	return td.Consumer
 }
 
-func (td TaskDescriptor) GetDescriptor() interface{} {
+func (td TaskDescriptor) GetDescriptor() map[string]interface{} {
 	return td.Descriptor
 }

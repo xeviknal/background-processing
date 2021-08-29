@@ -10,7 +10,6 @@ import (
 )
 
 type JobsPublisher struct{}
-type JobsConsumer struct{}
 
 // Checking that JobsPublisher implements
 //  Publisher interface at compile time
@@ -27,7 +26,7 @@ func (t JobsPublisher) Publish() {
 
 	// Fetching the jobs that haven't been queued
 	var jobs []models.Job
-	_, err = trans.Select(&jobs, "SELECT * FROM jobs WHERE queued_at IS NULL FOR UPDATE")
+	_, err = trans.Select(&jobs, "SELECT * FROM jobs WHERE queued_at IS NULL and cancelled_at IS NULL FOR UPDATE")
 	if err != nil {
 		log.Fatalf("error querying for %T: %v", t, err)
 	}
@@ -35,8 +34,8 @@ func (t JobsPublisher) Publish() {
 	queue := buffer.GetBuffer()
 	for _, job := range jobs {
 		descriptor := buffer.Descriptor(buffer.TaskDescriptor{
-			Consumer:   JobsConsumer{},
-			Descriptor: job.Id,
+			Consumer:   "JobsConsumer",
+			Descriptor: map[string]interface{}{"id": job.Id},
 		})
 		queue.Add(&descriptor)
 
