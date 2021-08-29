@@ -27,7 +27,7 @@ func (s *Server) Start() {
 	rand.Seed(time.Now().UnixNano())
 
 	// Setting appropriate db connection
-	database.SetConnectionConfig("jobs", "jobs", "jobs")
+	database.SetConnectionConfig("jobs", "jobs", "jobs", "mariadb.mariadb.svc.cluster.local")
 
 	go func() {
 		go consumers.ConsumeTasks()
