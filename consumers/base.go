@@ -12,7 +12,8 @@ type Consumer interface {
 }
 
 var consumerMap = map[string]Consumer{
-	"JobConsumer": JobsConsumer{},
+	"JobsConsumer":         JobsConsumer{},
+	"JobCancellerConsumer": JobCancellerConsumer{},
 }
 
 func ConsumeTasks() {
@@ -22,7 +23,8 @@ func ConsumeTasks() {
 		consumer, found := consumerMap[task.GetConsumer()]
 		if !found {
 			log.Fatalf("consumer not found: %s", task.GetConsumer())
+			continue
 		}
-		consumer.Perform(task.GetDescriptor())
+		go consumer.Perform(task.GetDescriptor())
 	}
 }

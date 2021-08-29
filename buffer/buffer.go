@@ -25,7 +25,7 @@ type TaskBuffer struct {
 
 var tb *Buffer
 var defaultBufferCap = 100 // 100 maxim tasks, otherwise wait the execution
-var defaultBufferTx = 10   // 10 tasks per second
+var defaultBufferTx = 10   // 10 tasks per second (approx)
 
 func NewTaskBuffer(cap, tx int) Buffer {
 	tb := &TaskBuffer{
@@ -56,7 +56,7 @@ func (tb *TaskBuffer) Add(t *Descriptor) {
 
 func (tb *TaskBuffer) Next() *Descriptor {
 	next := <-tb.Channel
-	time.Sleep(time.Duration(tb.Tx) * time.Millisecond)
+	time.Sleep((1 / time.Duration(tb.Tx)) * time.Millisecond)
 	return next
 }
 

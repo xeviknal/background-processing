@@ -1,6 +1,7 @@
 package consumers
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"time"
@@ -20,8 +21,8 @@ type JobsConsumer struct {
 //  Consumer interface at compile time
 var _ Consumer = (*JobsConsumer)(nil)
 
-var maxSleepDuration = 40
-var minSleepDuration = 15
+var minSleepDuration = 1
+var maxSleepDuration = 3
 
 func (jc JobsConsumer) Perform(params map[string]interface{}) {
 	jobId, found := params["id"]
@@ -68,25 +69,31 @@ func (jc JobsConsumer) Perform(params map[string]interface{}) {
 	// Starting the task itself. It doesn't need any lock.
 	jc.PerformTask()
 
-	// Once the task is done. Notify the end.
-	// Done in a transaction not to race condition with other publishers.
-	if err := jc.StartTransaction(); err != nil {
-		// TODO: retry? Set to QUEUE and increment retries
-		log.Fatalf("error starting transaction for job %T with id: %d. error: %v", jc, jobId, err)
-		return
-	}
+	// For demo purposes, mock a failure. One every 3 jobs
+	isFailure := jobId.(int64)%3 == 0
+	if !isFailure {
+		// Once the task is done. Notify the end.
+		// Done in a transaction not to race condition with other publishers.
+		if err := jc.StartTransaction(); err != nil {
+			// TODO: retry? Set to QUEUE and increment retries
+			log.Fatalf("error starting transaction for job %T with id: %d. error: %v", jc, jobId, err)
+			return
+		}
 
-	// Notify the end of the task. To allow publishers know this job is done
-	if err := jc.NotifyEndTask(); err != nil {
-		// TODO: retry? Set to QUEUE and increment retries
-		log.Fatalf("error updating job %T with id: %d. error: %v", jc, jobId, err)
-		return
-	}
+		// Notify the end of the task. To allow publishers know this job is done
+		if err := jc.NotifyEndTask(); err != nil {
+			// TODO: retry? Set to QUEUE and increment retries
+			log.Fatalf("error updating job %T with id: %d. error: %v", jc, jobId, err)
+			return
+		}
 
-	if err := jc.FinishTransaction(); err != nil {
-		// TODO: retry? Set to QUEUE and increment retries
-		log.Fatalf("error finishing transaction for job %T with id: %d. error: %v", jc, jobId, err)
-		return
+		if err := jc.FinishTransaction(); err != nil {
+			// TODO: retry? Set to QUEUE and increment retries
+			log.Fatalf("error finishing transaction for job %T with id: %d. error: %v", jc, jobId, err)
+			return
+		}
+	} else {
+		log.Println(fmt.Sprintf("Job #%d should FAIL", jobId))
 	}
 }
 
