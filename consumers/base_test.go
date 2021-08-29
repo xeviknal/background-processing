@@ -23,7 +23,7 @@ func teardown() {
 }
 
 func setupTestDatabase() {
-	database.SetConnectionConfig("test", "test", "test")
+	database.SetConnectionConfig("test", "test", "test", "localhost")
 }
 
 func destroyDatabase() {
