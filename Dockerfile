@@ -14,7 +14,6 @@ copy . ./
 
 RUN go build -o background-processing
 RUN chmod +x background-processing
-RUN ls -lash
 
 EXPOSE 3306
 
